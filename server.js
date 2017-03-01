@@ -3,6 +3,8 @@ const express = require('express');
 const graphQLHTTP = require('express-graphql');
 const compression = require('compression');
 const cors = require('cors');
+const rp = require('request-promise');
+const PORT = 4000;
 
 const getHi = new GraphQLObjectType({
     name: 'getHi',
@@ -12,7 +14,19 @@ const getHi = new GraphQLObjectType({
             type: GraphQLString,
             description: 'Outputs Hello World!',
             resolve: (args) => {
-                return `Hello ${args.name || 'World'}!`
+                const req = {
+                    url: 'http://www.mocky.io/v2/58b73184110000771b9c438b',
+                    method: 'GET',
+                    headers: {},
+                }
+
+                return rp(req).then(res => {
+                    const json = JSON.parse(res);
+                    process.env.NODE_ENV !== 'production' && console.info(`${req.url} called`)
+                    return `${json.greeting} ${args.name || 'World'}!`
+                }).catch(e => {
+                    throw e;
+                });
             }
         }
     }
@@ -51,6 +65,6 @@ app.use('/', graphQLHTTP({
     pretty: true,
     graphiql: process.env.NODE_ENV !== 'production',
 }))
-.listen(8080, function (err) {
-    console.log('GraphQL Server is now running on localhost:8080');
+.listen(PORT, function (err) {
+    console.log(`GraphQL Server is now running on localhost:${PORT}`);
 });

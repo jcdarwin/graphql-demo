@@ -29,3 +29,16 @@ You should see a result set similar to the following:
       }
     }
 
+## Dependencies
+
+We use [mocky](http://www.mocky.io/) to simulate REST endpoints -- e.g.
+
+http://www.mocky.io/v2/58b73184110000771b9c438b
+
+returns
+
+```
+{
+    greeting: "Hello"
+}
+```
